@@ -11,6 +11,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
+
+  await Firebase.initializeApp();
+  try {
+    final result = await FirebaseAuth.instance.fetchSignInMethodsForEmail('test@example.com');
+    print("Connected: $result");
+  } catch (e) {
+    print("Firebase error: $e");
+  }
+
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ru'), Locale('kz')],

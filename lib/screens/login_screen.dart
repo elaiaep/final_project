@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _google() async {
     try {
-      await _authSvc.signInWithGoogle();
+      await AuthService.signInWithGoogle(); // ✅ static call
     } catch (e) {
       msg('Google Sign-In failed');
     }
