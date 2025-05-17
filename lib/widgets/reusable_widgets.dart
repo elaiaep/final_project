@@ -31,7 +31,7 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton> {
       },
       child: AnimatedScale(
         scale: _scale,
-        duration: const Duration(milliseconds: 100),
+        duration: const Duration(milliseconds: 1000),
         child: ElevatedButton(
           onPressed: null,
           style: ElevatedButton.styleFrom(
