@@ -34,11 +34,17 @@ class _ItemListScreenState extends State<ItemListScreen> {
   void navigateToEdit(Item? item) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => AddEditItemScreen(item: item),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => AddEditItemScreen(item: item),
+        transitionsBuilder: (_, animation, __, child) {
+          return SlideTransition(
+            position: Tween<Offset>(begin: Offset(1, 0), end: Offset.zero).animate(animation),
+            child: child,
+          );
+        },
       ),
     );
-    fetchItems();
+    fetchItems(); // Refresh after return
   }
 
   @override
