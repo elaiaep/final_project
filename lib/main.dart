@@ -22,7 +22,7 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('ru'), Locale('kz')],
+      supportedLocales: const [Locale('en'), Locale('ru'), Locale('kk')],
       path: 'lib/localization',
       fallbackLocale: const Locale('en'),
       child: ChangeNotifierProvider(

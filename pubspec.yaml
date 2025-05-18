@@ -38,9 +38,9 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
+  uses-material-design: true
   assets:
     - lib/localization/en.json
     - lib/localization/ru.json
-    - lib/localization/kz.json
+    - lib/localization/kk.json
     - assets/animations/loading.json
-  uses-material-design: true

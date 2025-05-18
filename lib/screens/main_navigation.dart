@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'home_screen.dart';
+import 'item_list_screen.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
 
@@ -15,9 +15,10 @@ class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    HomeScreen(),
-    ProfileScreen(),
-    SettingsScreen(),
+    const HomeScreen(),
+    const ItemListScreen(),  // ✅ Item screen for SQLite CRUD
+    const ProfileScreen(),
+    const SettingsScreen(),
   ];
 
   void _onTap(int index) {
@@ -31,8 +32,10 @@ class _MainNavigationState extends State<MainNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onTap,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Items'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
