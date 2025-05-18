@@ -31,9 +31,9 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton> {
       },
       child: AnimatedScale(
         scale: _scale,
-        duration: const Duration(milliseconds: 1000),
+        duration: const Duration(milliseconds: 200),
         child: ElevatedButton(
-          onPressed: null,
+          onPressed: () {}, // keeps button enabled
           style: ElevatedButton.styleFrom(
             backgroundColor: widget.color,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -59,7 +59,7 @@ class AnimatedEntrance extends StatelessWidget {
         begin: const Offset(1, 0),
         end: Offset.zero,
       ),
-      duration: Duration(milliseconds: 300 + index * 100),
+      duration: Duration(milliseconds: 400 + index * 100),
       builder: (context, offset, _) {
         return Transform.translate(
           offset: offset * 30,
