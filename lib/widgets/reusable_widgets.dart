@@ -33,7 +33,7 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton> {
         scale: _scale,
         duration: const Duration(milliseconds: 200),
         child: ElevatedButton(
-          onPressed: () {}, // keeps button enabled
+          onPressed: widget.onPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: widget.color,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
