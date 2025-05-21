@@ -5,7 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'providers/theme_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_screen.dart';
+import 'screens/cart_screen.dart';
 import 'package:provider/provider.dart';
+import 'models/cart.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +27,11 @@ void main() async {
       supportedLocales: const [Locale('en'), Locale('ru'), Locale('kk')],
       path: 'lib/localization',
       fallbackLocale: const Locale('en'),
-      child: ChangeNotifierProvider(
-        create: (_) => ThemeProvider(),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => Cart()),
+        ],
         child: const MyApp(),
       ),
     ),

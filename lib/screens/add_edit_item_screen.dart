@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/item.dart';
 import '../services/db_service.dart';
-import '../widgets/reusable_widgets.dart'; // ✅ Import your reusable widgets
+import '../widgets/reusable_widgets.dart';
 
 class AddEditItemScreen extends StatefulWidget {
   final Item? item;
@@ -15,6 +15,11 @@ class _AddEditItemScreenState extends State<AddEditItemScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
+  final _priceController = TextEditingController();
+  final _imageUrlController = TextEditingController();
+  final _categoryController = TextEditingController();
+  final _brandController = TextEditingController();
+
   bool _isSaving = false;
 
   @override
@@ -23,6 +28,10 @@ class _AddEditItemScreenState extends State<AddEditItemScreen> {
     if (widget.item != null) {
       _titleController.text = widget.item!.title;
       _descController.text = widget.item!.description;
+      _priceController.text = widget.item!.price.toString();
+      _imageUrlController.text = widget.item!.imageUrl;
+      _categoryController.text = widget.item!.category;
+      _brandController.text = widget.item!.brand;
     }
   }
 
@@ -33,18 +42,29 @@ class _AddEditItemScreenState extends State<AddEditItemScreen> {
 
     final newItem = Item(
       id: widget.item?.id,
-      title: _titleController.text.trim(),
-      description: _descController.text.trim(),
+      title: _titleController.text,
+      description: _descController.text,
+      price: double.parse(_priceController.text),
+      imageUrl: _imageUrlController.text,
+      category: _categoryController.text,
+      brand: _brandController.text,
     );
 
-    if (widget.item == null) {
-      await DBService().addItem(newItem);
-    } else {
-      await DBService().updateItem(newItem);
-    }
+    try {
+      if (widget.item == null) {
+        await DBService().addItem(newItem);
+      } else {
+        await DBService().updateItem(newItem);
+      }
 
-    await Future.delayed(const Duration(milliseconds: 300)); // slight delay
-    if (mounted) Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      debugPrint("Error saving item: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error saving item')),
+      );
+      setState(() => _isSaving = false); // reset in case of error
+    }
   }
 
   @override
@@ -60,34 +80,17 @@ class _AddEditItemScreenState extends State<AddEditItemScreen> {
           padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
-            child: Column(
+            child: ListView(
               children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeOut,
-                  child: TextFormField(
-                    controller: _titleController,
-                    decoration: const InputDecoration(labelText: 'Title'),
-                    validator: (value) => value!.isEmpty ? 'Enter title' : null,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 600),
-                  curve: Curves.easeOut,
-                  child: TextFormField(
-                    controller: _descController,
-                    decoration: const InputDecoration(labelText: 'Description'),
-                    validator: (value) => value!.isEmpty ? 'Enter description' : null,
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                // ✅ Use AnimatedActionButton here
+                _buildField(_titleController, 'Title'),
+                _buildField(_descController, 'Description'),
+                _buildField(_priceController, 'Price', isNumber: true),
+                _buildField(_imageUrlController, 'Image URL'),
+                _buildField(_categoryController, 'Category'),
+                _buildField(_brandController, 'Brand'),
+                const SizedBox(height: 24),
                 _isSaving
-                    ? const SizedBox(
-                  width: 40,
-                  height: 40,
+                    ? const Center(
                   child: CircularProgressIndicator(strokeWidth: 3),
                 )
                     : AnimatedActionButton(
@@ -98,6 +101,23 @@ class _AddEditItemScreenState extends State<AddEditItemScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildField(TextEditingController controller, String label,
+      {bool isNumber = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 400),
+        child: TextFormField(
+          controller: controller,
+          keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+          decoration: InputDecoration(labelText: label),
+          validator: (v) =>
+          v == null || v.isEmpty ? 'Enter $label'.toLowerCase() : null,
         ),
       ),
     );

@@ -1,4 +1,3 @@
-
 name: final_project
 description: "A new Flutter project."
 publish_to: 'none'
@@ -44,3 +43,14 @@ flutter:
     - lib/localization/ru.json
     - lib/localization/kk.json
     - assets/animations/loading.json
+    - assets/images/
+    - assets/images/start.jpg
+    - assets/images/lespaul.jpg
+    - assets/images/gsmini.png
+    - assets/images/cg162c.jpg
+    - assets/images/custom.jpg
+    - assets/images/standart.jpg
+    - assets/images/concert.jpg
+    - assets/images/genesis.jpg
+    - assets/images/hummingbird.jpg
+    - assets/images/classical2.png
