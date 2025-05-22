@@ -5,6 +5,7 @@ class Guitar {
   final String imageUrl;
   final String type; // acoustic, electric, classical, etc.
   final String description;
+  final String? modelUrl; // URL to the 3D model
 
   Guitar({
     required this.name,
@@ -13,6 +14,7 @@ class Guitar {
     required this.imageUrl,
     required this.type,
     required this.description,
+    this.modelUrl,
   });
 }
 
@@ -33,6 +35,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/start.jpg',
     type: 'Electric',
     description: 'Professional grade electric guitar with premium pickups and maple neck',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
   ),
   Guitar(
     name: 'Les Paul Standard',
@@ -41,6 +44,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/lespaul.jpg',
     type: 'Electric',
     description: 'Iconic electric guitar with dual humbucker pickups and mahogany body',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
   ),
   Guitar(
     name: 'GS Mini Mahogany',
@@ -49,6 +53,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/gsmini.png',
     type: 'Acoustic',
     description: 'Compact acoustic guitar with rich, full sound and solid mahogany top',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
   ),
   Guitar(
     name: 'Classical CG162',
@@ -57,6 +62,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/cg162c.jpg',
     type: 'Classical',
     description: 'Traditional classical guitar with nylon strings and spruce top',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
   ),
   Guitar(
     name: 'Telecaster Custom',
@@ -65,6 +71,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/custom.jpg',
     type: 'Electric',
     description: 'Versatile electric guitar with classic tone and modern playability',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/Horse.glb',
   ),
   Guitar(
     name: 'SG Standard',
@@ -73,6 +80,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/standart.jpg',
     type: 'Electric',
     description: 'Legendary electric guitar with aggressive tone and distinctive design',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
   ),
   Guitar(
     name: 'Concert Series AC-150',
@@ -81,6 +89,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/concert.jpg',
     type: 'Acoustic',
     description: 'Professional acoustic guitar with solid spruce top and rosewood back',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
   ),
   Guitar(
     name: 'RG550 Genesis',
@@ -89,6 +98,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/genesis.jpg',
     type: 'Electric',
     description: 'High-performance electric guitar for modern players and shredders',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/Horse.glb',
   ),
   Guitar(
     name: 'Hummingbird',
@@ -97,6 +107,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/hummingbird.jpg',
     type: 'Acoustic',
     description: 'Iconic acoustic guitar with rich tone and beautiful craftsmanship',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
   ),
   Guitar(
     name: 'Classical GC82',
@@ -105,6 +116,7 @@ final List<Guitar> sampleGuitars = [
     imageUrl: 'assets/images/classical2.png',
     type: 'Classical',
     description: 'Professional classical guitar with solid cedar top and Indian rosewood',
+    modelUrl: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
   ),
 ];
 

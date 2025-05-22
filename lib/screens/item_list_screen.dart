@@ -6,6 +6,7 @@ import '../models/cart.dart';
 import '../services/db_service.dart';
 import 'add_edit_item_screen.dart';
 import '../widgets/reusable_widgets.dart'; // For AnimatedActionButton, AnimatedEntrance
+import '../services/currency_service.dart';
 
 class ItemListScreen extends StatefulWidget {
   const ItemListScreen({super.key});
@@ -17,6 +18,8 @@ class ItemListScreen extends StatefulWidget {
 class _ItemListScreenState extends State<ItemListScreen> with SingleTickerProviderStateMixin {
   List<Item> items = [];
   late TabController _tabController;
+  String _selectedCurrency = 'USD';
+  Future<double>? _conversionFuture;
 
   @override
   void initState() {
@@ -54,9 +57,17 @@ class _ItemListScreenState extends State<ItemListScreen> with SingleTickerProvid
     _loadItems();
   }
 
+  Future<double> _getConvertedAmount(double amount) async {
+    if (_selectedCurrency == 'USD') return amount;
+    return CurrencyService.convertCurrency(amount, 'USD', _selectedCurrency);
+  }
+
   Widget _buildCartTab() {
     return Consumer<Cart>(
       builder: (context, cart, child) {
+        // Update conversion future when cart total or currency changes
+        _conversionFuture = _getConvertedAmount(cart.totalAmount);
+
         if (cart.items.isEmpty) {
           return Center(
             child: Column(
@@ -193,20 +204,53 @@ class _ItemListScreenState extends State<ItemListScreen> with SingleTickerProvid
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'total'.tr(),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            'total'.tr(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          DropdownButton<String>(
+                            value: _selectedCurrency,
+                            items: CurrencyService.supportedCurrencies
+                                .map((currency) => DropdownMenuItem(
+                                      value: currency,
+                                      child: Text(currency),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() => _selectedCurrency = value);
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      Text(
-                        '\$${cart.totalAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                      FutureBuilder<double>(
+                        future: _conversionFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            );
+                          }
+                          
+                          final amount = snapshot.data ?? cart.totalAmount;
+                          return Text(
+                            '${_selectedCurrency == 'USD' ? '\$' : ''}${amount.toStringAsFixed(2)} ${_selectedCurrency != 'USD' ? _selectedCurrency : ''}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

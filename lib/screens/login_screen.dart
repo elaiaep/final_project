@@ -31,9 +31,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _google() async {
     try {
-      await AuthService.signInWithGoogle(); // ✅ static call
+      await AuthService.signInWithGoogle();
     } catch (e) {
-      msg('Google Sign-In failed');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Google Sign-In failed: ${e.toString()}'),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
+  }
+
+  Future<void> _facebook() async {
+    try {
+      await AuthService.signInWithFacebook();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Facebook Sign-In failed: ${e.toString()}'),
+          duration: const Duration(seconds: 5),
+        ),
+      );
     }
   }
 
@@ -53,10 +73,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Text(isLogin?'Create account':'Already have one?')
             ),
             const Divider(),
-            ElevatedButton.icon(
-              onPressed: _google,
-              icon: const Icon(Icons.login),
-              label: const Text('Google Sign‑In'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _google,
+                    icon: const Icon(Icons.login),
+                    label: const Text('Google'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _facebook,
+                    icon: const Icon(Icons.facebook),
+                    label: const Text('Facebook'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[900],
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

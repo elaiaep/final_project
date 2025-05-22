@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/cart.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -9,39 +10,7 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shopping Cart'),
-        actions: [
-          Consumer<Cart>(
-            builder: (context, cart, child) {
-              if (cart.items.isEmpty) return const SizedBox();
-              return IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Clear Cart'),
-                      content: const Text('Are you sure you want to remove all items?'),
-                      actions: [
-                        TextButton(
-                          child: const Text('Cancel'),
-                          onPressed: () => Navigator.of(ctx).pop(),
-                        ),
-                        TextButton(
-                          child: const Text('Clear'),
-                          onPressed: () {
-                            cart.clear();
-                            Navigator.of(ctx).pop();
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ],
+        title: Text('cart'.tr()),
       ),
       body: Consumer<Cart>(
         builder: (context, cart, child) {
@@ -57,7 +26,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Your cart is empty',
+                    'your_cart_empty'.tr(),
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.grey[600],
@@ -65,8 +34,16 @@ class CartScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Continue Shopping'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text('continue_shopping'.tr()),
                   ),
                 ],
               ),
@@ -80,84 +57,41 @@ class CartScreen extends StatelessWidget {
                   itemCount: cart.items.length,
                   itemBuilder: (context, index) {
                     final item = cart.items.values.toList()[index];
-                    final guitar = item.guitar;
-
-                    return Dismissible(
-                      key: ValueKey(guitar.name),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        color: Colors.red,
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
+                    return Card(
+                      margin: const EdgeInsets.all(8),
+                      child: ListTile(
+                        leading: Image.asset(
+                          item.guitar.imageUrl,
+                          width: 56,
+                          height: 56,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                      onDismissed: (_) {
-                        cart.removeItem(guitar.name);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${guitar.name} removed from cart'),
-                            action: SnackBarAction(
-                              label: 'UNDO',
+                        title: Text(item.guitar.name),
+                        subtitle: Text('\$${item.guitar.price.toStringAsFixed(2)}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove),
                               onPressed: () {
-                                cart.addItem(guitar);
+                                if (item.quantity > 1) {
+                                  cart.updateQuantity(item.guitar.name, item.quantity - 1);
+                                } else {
+                                  cart.removeItem(item.guitar.name);
+                                }
                               },
                             ),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 4,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: ListTile(
-                            leading: Hero(
-                              tag: 'cart_${guitar.name}',
-                              child: CircleAvatar(
-                                backgroundImage: AssetImage(guitar.imageUrl),
-                              ),
+                            Text(
+                              '${item.quantity}',
+                              style: const TextStyle(fontSize: 16),
                             ),
-                            title: Text(guitar.name),
-                            subtitle: Text(
-                              '${guitar.brand} • \$${(guitar.price * item.quantity).toStringAsFixed(2)}',
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () {
+                                cart.updateQuantity(item.guitar.name, item.quantity + 1);
+                              },
                             ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  onPressed: () {
-                                    if (item.quantity > 1) {
-                                      cart.updateQuantity(
-                                        guitar.name,
-                                        item.quantity - 1,
-                                      );
-                                    } else {
-                                      cart.removeItem(guitar.name);
-                                    }
-                                  },
-                                ),
-                                Text(
-                                  '${item.quantity}',
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    cart.updateQuantity(
-                                      guitar.name,
-                                      item.quantity + 1,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          ],
                         ),
                       ),
                     );
@@ -170,9 +104,9 @@ class CartScreen extends StatelessWidget {
                   color: Theme.of(context).cardColor,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: const Offset(0, -2),
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
                     ),
                   ],
                 ),
@@ -181,9 +115,9 @@ class CartScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Total:',
-                          style: TextStyle(
+                        Text(
+                          'total'.tr(),
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -204,11 +138,6 @@ class CartScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // TODO: Implement checkout
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Checkout functionality coming soon!'),
-                            ),
-                          );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -216,10 +145,7 @@ class CartScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: const Text(
-                          'Checkout',
-                          style: TextStyle(fontSize: 18),
-                        ),
+                        child: Text('checkout'.tr()),
                       ),
                     ),
                   ],

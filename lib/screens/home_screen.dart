@@ -3,6 +3,7 @@ import '../models/guitar.dart';
 import '../widgets/guitar_card.dart';
 import '../widgets/filter_sheet.dart';
 import '../screens/guitar_detail_screen.dart';
+import '../widgets/page_transition.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -96,37 +97,34 @@ class _HomeScreenState extends State<HomeScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        expand: false,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: FilterSheet(
-              selectedTypes: selectedTypes,
-              selectedBrands: selectedBrands,
-              selectedPriceRange: selectedPriceRange,
-              currentSort: currentSort,
-              onTypesChanged: (types) {
-                setState(() => selectedTypes = types);
-                _applyFilters(_searchController.text);
-              },
-              onBrandsChanged: (brands) {
-                setState(() => selectedBrands = brands);
-                _applyFilters(_searchController.text);
-              },
-              onPriceRangeChanged: (range) {
-                setState(() => selectedPriceRange = range);
-                _applyFilters(_searchController.text);
-              },
-              onSortChanged: (sort) {
-                setState(() => currentSort = sort);
-                _applyFilters(_searchController.text);
-              },
-            ),
-          );
+      builder: (context) => FilterSheet(
+        selectedTypes: selectedTypes,
+        selectedBrands: selectedBrands,
+        selectedPriceRange: selectedPriceRange,
+        currentSort: currentSort,
+        onTypesChanged: (types) {
+          setState(() {
+            selectedTypes = types;
+            _applyFilters(_searchController.text);
+          });
+        },
+        onBrandsChanged: (brands) {
+          setState(() {
+            selectedBrands = brands;
+            _applyFilters(_searchController.text);
+          });
+        },
+        onPriceRangeChanged: (range) {
+          setState(() {
+            selectedPriceRange = range;
+            _applyFilters(_searchController.text);
+          });
+        },
+        onSortChanged: (sort) {
+          setState(() {
+            currentSort = sort;
+            _applyFilters(_searchController.text);
+          });
         },
       ),
     );
@@ -135,110 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Catalogue'),
-        elevation: 0,
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.filter_list),
-                onPressed: _showFilterSheet,
-              ),
-              if (selectedTypes.isNotEmpty ||
-                  selectedBrands.isNotEmpty ||
-                  selectedPriceRange != null)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      '${selectedTypes.length + selectedBrands.length + (selectedPriceRange != null ? 1 : 0)}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
+            appBar: AppBar(        title: Container(          height: 40,          decoration: BoxDecoration(            color: Theme.of(context).colorScheme.surface,            borderRadius: BorderRadius.circular(20),            boxShadow: [              BoxShadow(                color: Colors.black.withOpacity(0.1),                blurRadius: 4,                offset: const Offset(0, 2),              ),            ],          ),          child: TextField(            controller: _searchController,            decoration: InputDecoration(              hintText: 'Search guitars...',              prefixIcon: const Icon(Icons.search),              suffixIcon: _searchController.text.isNotEmpty                ? IconButton(                    icon: const Icon(Icons.clear),                    onPressed: () {                      _searchController.clear();                      _applyFilters('');                    },                  )                : null,              border: InputBorder.none,              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),              hintStyle: TextStyle(color: Theme.of(context).hintColor),            ),            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),            onChanged: _applyFilters,          ),        ),        actions: [          IconButton(            icon: const Icon(Icons.filter_list),            onPressed: _showFilterSheet,          ),        ],      ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _applyFilters,
-              decoration: InputDecoration(
-                hintText: 'Search guitars...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                filled: true,
-                fillColor: Colors.grey[100],
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-              ),
-            ),
-          ),
-          if (selectedTypes.isNotEmpty ||
-              selectedBrands.isNotEmpty ||
-              selectedPriceRange != null)
-            Container(
-              height: 32,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  ...selectedTypes.map(
-                    (type) => Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Chip(
-                        label: Text(type),
-                        onDeleted: () {
-                          setState(() {
-                            selectedTypes.remove(type);
-                          });
-                          _applyFilters(_searchController.text);
-                        },
-                      ),
-                    ),
-                  ),
-                  ...selectedBrands.map(
-                    (brand) => Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Chip(
-                        label: Text(brand),
-                        onDeleted: () {
-                          setState(() {
-                            selectedBrands.remove(brand);
-                          });
-                          _applyFilters(_searchController.text);
-                        },
-                      ),
-                    ),
-                  ),
-                  if (selectedPriceRange != null)
-                    Chip(
-                      label: Text(selectedPriceRange!['label']),
-                      onDeleted: () {
-                        setState(() {
-                          selectedPriceRange = null;
-                        });
-                        _applyFilters(_searchController.text);
-                      },
-                    ),
-                ],
-              ),
-            ),
           Expanded(
             child: filteredGuitars.isEmpty
                 ? Center(
@@ -270,21 +167,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) =>
-                                GuitarDetailScreen(guitar: filteredGuitars[index]),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                const begin = Offset(1.0, 0.0);
-                                const end = Offset.zero;
-                                const curve = Curves.easeInOut;
-                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                var offsetAnimation = animation.drive(tween);
-                                return SlideTransition(
-                                  position: offsetAnimation,
-                                  child: child,
-                                );
-                              },
-                              transitionDuration: const Duration(milliseconds: 400),
+                            PageTransitions.slideTransition(
+                              page: GuitarDetailScreen(guitar: filteredGuitars[index]),
+                              duration: const Duration(milliseconds: 500),
                             ),
                           );
                         },
